@@ -1,0 +1,830 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>TaskCarrier · earn & withdraw</title>
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: #f6f9fe;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    /* main app container – card style, responsive max width */
+    .app-container {
+      max-width: 1200px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    /* header / carrier top bar */
+    .carrier-header {
+      background: linear-gradient(145deg, #0b1e3a, #1a2f4f);
+      color: white;
+      padding: 1.8rem 2.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      background: #3b82f6;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: white;
+      box-shadow: 0 8px 18px -6px rgba(59, 130, 246, 0.5);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .logo-text span {
+      font-weight: 300;
+      font-size: 1rem;
+      opacity: 0.8;
+      display: block;
+      letter-spacing: 0.3px;
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      background: #2563eb;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+
+    .user-info {
+      line-height: 1.3;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .user-role {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* main content grid – 2 columns on desktop */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 0;
+    }
+
+    /* left panel: task stats & tasks */
+    .tasks-panel {
+      padding: 2rem 2rem 2rem 2.2rem;
+      border-right: 1px solid #eef2f8;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #0b1e3a;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.2px;
+    }
+
+    .section-title i {
+      color: #3b82f6;
+      font-size: 1.2rem;
+    }
+
+    .earnings-card {
+      background: linear-gradient(135deg, #eef4ff, #ffffff);
+      border-radius: 28px;
+      padding: 1.8rem;
+      border: 1px solid #dbeafe;
+      box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    .earnings-label {
+      font-size: 0.9rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 0.5rem;
+    }
+
+    .earnings-amount {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #0b1e3a;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 0.6rem;
+    }
+
+    .earnings-amount small {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #3b82f6;
+    }
+
+    .withdraw-hint {
+      font-size: 0.9rem;
+      color: #b45309;
+      background: #fffbeb;
+      padding: 0.7rem 1rem;
+      border-radius: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #fde68a;
+      font-weight: 500;
+      margin-top: 0.8rem;
+    }
+
+    .withdraw-hint i {
+      font-size: 1rem;
+    }
+
+    .task-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f9fbfe;
+      padding: 1rem 1.4rem;
+      border-radius: 60px;
+      border: 1px solid #eef2f8;
+      transition: all 0.2s ease;
+    }
+
+    .task-item:hover {
+      background: white;
+      border-color: #cbdff8;
+      box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.08);
+    }
+
+    .task-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .task-icon {
+      width: 40px;
+      height: 40px;
+      background: #e0edff;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2563eb;
+      font-size: 1.1rem;
+    }
+
+    .task-details h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0b1e3a;
+      margin-bottom: 0.2rem;
+    }
+
+    .task-details p {
+      font-size: 0.8rem;
+      color: #5f6c84;
+    }
+
+    .task-reward {
+      font-weight: 700;
+      color: #0b1e3a;
+      background: #dbeafe;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    /* right panel: withdrawal section */
+    .withdraw-panel {
+      padding: 2rem 2.2rem 2rem 2rem;
+      background: #fbfdff;
+    }
+
+    .balance-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.8rem;
+      box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e9f0fa;
+      margin-bottom: 2rem;
+    }
+
+    .balance-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .balance-label {
+      font-size: 0.95rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .balance-amount {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #0b1e3a;
+      letter-spacing: -1px;
+    }
+
+    .balance-amount small {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #3b82f6;
+    }
+
+    .withdraw-fee-badge {
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 0.8rem;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .withdraw-methods {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .method {
+      flex: 1;
+      min-width: 80px;
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 1rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-weight: 500;
+      color: #475569;
+    }
+
+    .method i {
+      font-size: 1.6rem;
+      color: #3b82f6;
+    }
+
+    .method.active {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      color: #1d4ed8;
+      box-shadow: 0 4px 12px -6px #3b82f680;
+    }
+
+    .input-group {
+      margin: 1.5rem 0 1rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .amount-input-wrapper {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 60px;
+      padding: 0.2rem 0.2rem 0.2rem 1.5rem;
+      transition: border 0.15s;
+    }
+
+    .amount-input-wrapper:focus-within {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    }
+
+    .amount-input-wrapper i {
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+
+    .amount-input-wrapper input {
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 0.9rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      background: transparent;
+      color: #0b1e3a;
+    }
+
+    .amount-input-wrapper input::placeholder {
+      font-weight: 400;
+      color: #a0aec0;
+      font-size: 1rem;
+    }
+
+    .max-btn {
+      background: #eef4ff;
+      border: none;
+      color: #2563eb;
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+
+    .max-btn:hover {
+      background: #dbeafe;
+    }
+
+    .pay-notice {
+      background: #fff7ed;
+      border-left: 4px solid #f97316;
+      padding: 1rem 1.2rem;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      color: #9a3412;
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+
+    .pay-notice i {
+      font-size: 1.2rem;
+      color: #f97316;
+      margin-top: 2px;
+    }
+
+    .pay-notice strong {
+      font-weight: 700;
+    }
+
+    .withdraw-btn {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 60px;
+      padding: 1.1rem 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 12px 25px -10px #2563eb90;
+      margin-top: 1rem;
+      letter-spacing: -0.2px;
+    }
+
+    .withdraw-btn:active {
+      transform: scale(0.98);
+    }
+
+    .withdraw-btn:disabled {
+      opacity: 0.6;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .withdraw-btn i {
+      font-size: 1.2rem;
+    }
+
+    .mini-footer {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    /* toast for feedback */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0b1e3a;
+      color: white;
+      padding: 0.9rem 2rem;
+      border-radius: 60px;
+      font-weight: 500;
+      box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+      z-index: 999;
+      font-size: 0.95rem;
+      max-width: 90vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .tasks-panel {
+        border-right: none;
+        border-bottom: 1px solid #eef2f8;
+        padding: 1.8rem 1.6rem;
+      }
+
+      .withdraw-panel {
+        padding: 1.8rem 1.6rem;
+      }
+
+      .carrier-header {
+        padding: 1.3rem 1.5rem;
+      }
+    }
+
+    @media (max-width: 550px) {
+      body {
+        padding: 0.6rem;
+      }
+
+      .app-container {
+        border-radius: 2rem;
+      }
+
+      .carrier-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.3rem 1.4rem;
+      }
+
+      .user-badge {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .earnings-amount {
+        font-size: 2.2rem;
+      }
+
+      .balance-amount {
+        font-size: 1.9rem;
+      }
+
+      .task-item {
+        padding: 0.8rem 1rem;
+      }
+
+      .task-reward {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.8rem;
+      }
+
+      .method {
+        padding: 0.7rem 0.3rem;
+        font-size: 0.8rem;
+      }
+
+      .method i {
+        font-size: 1.3rem;
+      }
+
+      .withdraw-btn {
+        font-size: 1rem;
+        padding: 0.9rem;
+      }
+
+      .section-title {
+        font-size: 1rem;
+      }
+
+      .earnings-card,
+      .balance-card {
+        padding: 1.3rem;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .task-info {
+        gap: 0.6rem;
+      }
+
+      .task-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+      }
+
+      .task-details h4 {
+        font-size: 0.9rem;
+      }
+
+      .task-details p {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- carrier header -->
+    <header class="carrier-header">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+        <div class="logo-text">TaskCarrier<span>earn · deliver · withdraw</span></div>
+      </div>
+      <div class="user-badge">
+        <div class="avatar">JD</div>
+        <div class="user-info">
+          <div class="user-name">James D.</div>
+          <div class="user-role"><i class="fas fa-check-circle" style="color:#4ade80; font-size:0.7rem;"></i> Verified carrier</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- dashboard grid -->
+    <div class="dashboard">
+      <!-- left: tasks panel -->
+      <section class="tasks-panel">
+        <div class="section-title">
+          <i class="fas fa-clipboard-list"></i> Available tasks
+        </div>
+
+        <!-- earnings quick view -->
+        <div class="earnings-card">
+          <div class="earnings-label"><i class="fas fa-coins"></i> Total earned (this week)</div>
+          <div class="earnings-amount">$247<small>.50</small></div>
+          <div class="withdraw-hint">
+            <i class="fas fa-lock"></i> Withdrawal requires a $2.99 processing fee
+          </div>
+        </div>
+
+        <!-- task list -->
+        <ul class="task-list">
+          <li class="task-item">
+            <div class="task-info">
+              <div class="task-icon"><i class="fas fa-box"></i></div>
+              <div class="task-details">
+                <h4>Package delivery</h4>
+                <p>Downtown · 2.3 km</p>
+              </div>
+            </div>
+            <div class="task-reward">$18.50</div>
+          </li>
+          <li class="task-item">
+            <div class="task-info">
+              <div class="task-icon"><i class="fas fa-utensils"></i></div>
+              <div class="task-details">
+                <h4>Food pickup</h4>
+                <p>Uptown · 1.8 km</p>
+              </div>
+            </div>
+            <div class="task-reward">$12.00</div>
+          </li>
+          <li class="task-item">
+            <div class="task-info">
+              <div class="task-icon"><i class="fas fa-shopping-bag"></i></div>
+              <div class="task-details">
+                <h4>Grocery run</h4>
+                <p>Westside · 3.1 km</p>
+              </div>
+            </div>
+            <div class="task-reward">$22.30</div>
+          </li>
+          <li class="task-item">
+            <div class="task-info">
+              <div class="task-icon"><i class="fas fa-file-alt"></i></div>
+              <div class="task-details">
+                <h4>Document drop</h4>
+                <p>Business district · 1.2 km</p>
+              </div>
+            </div>
+            <div class="task-reward">$9.75</div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- right: withdraw panel -->
+      <section class="withdraw-panel">
+        <div class="section-title">
+          <i class="fas fa-hand-holding-usd"></i> Withdraw funds
+        </div>
+
+        <div class="balance-card">
+          <div class="balance-row">
+            <div>
+              <div class="balance-label"><i class="fas fa-wallet"></i> Available balance</div>
+              <div class="balance-amount" id="availableBalance">$247<small>.50</small></div>
+            </div>
+            <div class="withdraw-fee-badge">
+              <i class="fas fa-receipt"></i> fee $2.99
+            </div>
+          </div>
+
+          <!-- withdrawal methods -->
+          <div class="withdraw-methods">
+            <div class="method active" data-method="bank">
+              <i class="fas fa-university"></i>
+              <span>Bank</span>
+            </div>
+            <div class="method" data-method="paypal">
+              <i class="fab fa-paypal"></i>
+              <span>PayPal</span>
+            </div>
+            <div class="method" data-method="crypto">
+              <i class="fab fa-bitcoin"></i>
+              <span>Crypto</span>
+            </div>
+          </div>
+
+          <!-- amount input -->
+          <div class="input-group">
+            <label for="withdrawAmount">Withdrawal amount</label>
+            <div class="amount-input-wrapper">
+              <i class="fas fa-dollar-sign"></i>
+              <input type="number" id="withdrawAmount" placeholder="0.00" min="0.01" step="0.01" value="20.00">
+              <button class="max-btn" id="maxBtn">MAX</button>
+            </div>
+          </div>
+
+          <!-- pay before withdrawal notice -->
+          <div class="pay-notice">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div><strong>Payment required before withdrawal.</strong> A one-time processing fee of <strong>$2.99</strong> will be charged to your linked payment method. You must pay this fee before funds are released.</div>
+          </div>
+
+          <!-- withdrawal action -->
+          <button class="withdraw-btn" id="withdrawBtn">
+            <i class="fas fa-credit-card"></i> Pay $2.99 & withdraw
+          </button>
+
+          <div class="mini-footer">
+            <span><i class="fas fa-shield-alt"></i> Secure</span>
+            <span><i class="fas fa-clock"></i> Instant</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- toast message -->
+  <div class="toast" id="toast">Message</div>
+
+  <script>
+    (function() {
+      // ---- state ----
+      let balance = 247.50;
+      let selectedMethod = 'bank';
+      const WITHDRAW_FEE = 2.99;
+
+      // DOM elements
+      const availableBalanceEl = document.getElementById('availableBalance');
+      const withdrawAmountInput = document.getElementById('withdrawAmount');
+      const maxBtn = document.getElementById('maxBtn');
+      const withdrawBtn = document.getElementById('withdrawBtn');
+      const methodEls = document.querySelectorAll('.method');
+      const toast = document.getElementById('toast');
+
+      // helper: format currency
+      function formatMoney(amount) {
+        return amount.toFixed(2);
+      }
+
+      // update balance display
+      function updateBalanceDisplay() {
+        const [dollars, cents] = formatMoney(balance).split('.');
+        availableBalanceEl.innerHTML = `$${dollars}<small>.${cents}</small>`;
+      }
+
+      // show toast
+      function showToast(message, duration = 2800) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, duration);
+      }
+
+      // set max amount (balance minus fee, but not negative)
+      function setMaxAmount() {
+        let maxWithdraw = balance - WITHDRAW_FEE;
+        if (maxWithdraw < 0) maxWithdraw = 0;
+        withdrawAmountInput.value = formatMoney(maxWithdraw);
+        // if maxWithdraw is 0, we can show a hint
+        if (maxWithdraw <= 0) {
+          showToast('Insufficient balance to cover the $2.99 fee.', 3000);
+        }
+      }
+
+      // handle withdraw action
+      function handleWithdraw() {
+        const rawAmount = withdrawAmountInput.value.trim();
+        if (rawAmount === '') {
+          showToast('Please enter an amount.');
+          return;
+        }
+
+        const withdrawAmount = parseFloat(rawAmount);
+        if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+          showToast('Enter a valid amount greater than 0.');
+          return;
+        }
+
+      
